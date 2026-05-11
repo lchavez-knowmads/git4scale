@@ -1,0 +1,5 @@
+pandas
+requests
+python-dotenv
+dbt-core
+dbt-sqlite

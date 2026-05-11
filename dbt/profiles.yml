@@ -1,0 +1,8 @@
+default:
+  outputs:
+    dev:
+      type: sqlite
+      schema: main
+      threads: 1
+      database: ./weather_air_quality.db
+  target: dev
