@@ -5,4 +5,5 @@ default:
       schema: main
       threads: 1
       database: ./weather_air_quality.db
+      schemas_and_paths: {}
   target: dev
