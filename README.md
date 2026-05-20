@@ -45,6 +45,10 @@ pip install -r requirements.txt
 ```
 
 ### 4. Configurar Variables de Entorno
+Acceda a las direcciones para crear su API key
+ - https://openweathermap.org/api
+ - https://dashboard.iqair.com/personal/api-keys
+
 Crea un archivo `.env` en la raíz del proyecto con tus claves API:
 ```
 OPENWEATHER_API_KEY=tu_clave_api_de_openweathermap_aqui
@@ -61,6 +65,11 @@ cd dbt
 # Instalar dependencias de dbt (si las hay)
 dbt deps
 ```
+puede aparecer el mensaje
+```bash
+Warning: No packages were found in packages.yml
+```
+y no hay problemas
 
 ### 6. Verificar la Configuración
 Puedes comprobar que todo funciona correctamente ejecutando:

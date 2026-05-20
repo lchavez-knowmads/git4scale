@@ -7,11 +7,11 @@ load_dotenv()
 
 def extract_weather(city="London"):
     """
-    Extract current weather data for a given city from OpenWeatherMap API.
+    Extrae los datos meteorológicos actuales de una ciudad determinada desde la API de OpenWeatherMap.
     """
     api_key = os.getenv("OPENWEATHER_API_KEY")
     if not api_key:
-        raise ValueError("OPENWEATHER_API_KEY not found in environment variables")
+        raise ValueError("No se encontró la clave API de OpenWeather en las variables de entorno.")
     
     base_url = "http://api.openweathermap.org/data/2.5/weather"
     params = {
@@ -51,13 +51,13 @@ if __name__ == "__main__":
         try:
             df = extract_weather(city)
             all_data.append(df)
-            print(f"Successfully extracted weather for {city}")
+            print(f"Información de clime extraída con éxito para {city}")
         except Exception as e:
-            print(f"Failed to extract weather for {city}: {e}")
+            print(f"No se pudo extraer el clima para {city}: {e}")
     
     if all_data:
         combined_df = pd.concat(all_data, ignore_index=True)
         # Save to CSV for dbt to pick up
         os.makedirs("data", exist_ok=True)
         combined_df.to_csv("data/weather_raw.csv", index=False)
-        print("Weather data saved to data/weather_raw.csv")
+        print("Datos meteorológicos guardados en data/weather_raw.csv")

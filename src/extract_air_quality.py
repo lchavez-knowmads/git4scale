@@ -7,11 +7,11 @@ load_dotenv()
 
 def extract_air_quality(city="London", state="", country="UK"):
     """
-    Extract current air quality data for a given city from AirVisual API.
+    Extraiga los datos actuales de calidad del aire para una ciudad determinada desde la API de AirVisual.
     """
     api_key = os.getenv("AIRVISUAL_API_KEY")
     if not api_key:
-        raise ValueError("AIRVISUAL_API_KEY not found in environment variables")
+        raise ValueError("AIRVISUAL_API_KEY no se encontró en las variables de entorno.")
     
     base_url = "http://api.airvisual.com/v2/city"
     params = {
@@ -66,13 +66,13 @@ if __name__ == "__main__":
         try:
             df = extract_air_quality(**location)
             all_data.append(df)
-            print(f"Successfully extracted air quality for {location['city']}")
+            print(f"Calidad del aire extraída con éxito para {location['city']}")
         except Exception as e:
-            print(f"Failed to extract air quality for {location['city']}: {e}")
+            print(f"No se pudo extraer la calidad del aire para {location['city']}: {e}")
     
     if all_data:
         combined_df = pd.concat(all_data, ignore_index=True)
         # Save to CSV for dbt to pick up
         os.makedirs("data", exist_ok=True)
         combined_df.to_csv("data/air_quality_raw.csv", index=False)
-        print("Air quality data saved to data/air_quality_raw.csv")
+        print("Datos de calidad del aire guardados en data/air_quality_raw.csv")
