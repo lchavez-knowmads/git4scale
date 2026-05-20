@@ -123,6 +123,7 @@ Esto creará archivos CSV en el directorio `data/`:
 ```bash
 # Desde el directorio de dbt
 cd dbt
+dbt seed
 dbt run
 ```
 Esto hará lo siguiente:

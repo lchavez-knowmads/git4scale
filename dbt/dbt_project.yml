@@ -5,7 +5,7 @@ config-version: 2
 profile: 'default'
 
 model-paths: ["models"]
-seed-paths: ["seeds"]
+seed-paths: ["../data"]
 test-paths: ["tests"]
 target-path: "target"
 clean-targets:

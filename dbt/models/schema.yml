@@ -8,13 +8,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['London', 'New York', 'Tokyo', 'Sydney']
+              arguments:
+                values: ['London', 'New York', 'Tokyo', 'Sydney']
       - name: temperature
         tests:
           - not_null
           - accepted_range:
-              min: -50
-              max: 60
+              arguments:
+                min: -50
+                max: 60
 
   - name: stg_air_quality
     description: "Staged air quality data"
@@ -26,8 +28,9 @@ models:
         tests:
           - not_null
           - accepted_range:
-              min: 0
-              max: 500
+              arguments:
+                min: 0
+                max: 500
 
   - name: mart_weather_air_quality
     description: "Mart table combining weather and air quality data"
@@ -39,5 +42,6 @@ models:
         tests:
           - not_null
           - accepted_range:
-              min: -50
-              max: 60
+              arguments:
+                min: -50
+                max: 60
