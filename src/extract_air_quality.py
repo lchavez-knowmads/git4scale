@@ -54,10 +54,10 @@ def extract_air_quality(city="London", state="", country="UK"):
 if __name__ == "__main__":
     # For testing, extract air quality for a few cities
     cities = [
-        {"city": "London", "state": "", "country": "UK"},
-        {"city": "New York", "state": "NY", "country": "USA"},
-        {"city": "Tokyo", "state": "", "country": "JP"},
-        {"city": "Sydney", "state": "NSW", "country": "AU"}
+        {"city": "London", "state": "England", "country": "United Kingdom"},
+        {"city": "New York", "state": "New York", "country": "USA"},
+        {"city": "Tokyo", "state": "Tokyo", "country": "Japan"},
+        {"city": "Sydney", "state": "New South Wales", "country": "Australia"}
     ]
     
     all_data = []
