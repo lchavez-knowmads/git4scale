@@ -11,9 +11,30 @@ Este es un pipeline ETL simple que:
 Antes de comenzar, asegúrate de tener:
 - Python 3.8 o superior instalado
 - Git instalado
+- **sqlite3** (CLI del sistema) instalado — en Linux/WSL: `sudo apt install sqlite3`
 - Acceso a las claves API de OpenWeatherMap y AirVisual (puedes obtener niveles gratuitos para pruebas)
 
-## Instrucciones de Configuración
+## Setup Rápido (Recomendado)
+
+Puedes configurar todo el entorno automáticamente con el script de setup:
+
+```bash
+# Dar permisos de ejecución y correr el script
+chmod +x setup.sh
+./setup.sh
+```
+
+El script instala automáticamente:
+- `sqlite3` (si no está presente y tienes `apt` o `brew`)
+- El entorno virtual de Python
+- Todas las dependencias de Python (`requirements.txt`)
+- Las dependencias de dbt
+
+Si prefieres la configuración manual, sigue los pasos a continuación.
+
+---
+
+## Instrucciones de Configuración Manual
 
 Sigue estos pasos para configurar el proyecto:
 
@@ -103,6 +124,7 @@ weather-air-quality-pipeline/
 │   └── workflows/
 │       └── ci.yml                  # CI/CD con GitHub Actions
 ├── requirements.txt                # Dependencias de Python
+├── setup.sh                        # Script de setup automático del entorno
 ├── .env                            # Variables de entorno (NO en el repo)
 └── README.md
 ```
@@ -174,6 +196,12 @@ Para hacer cambios en este proyecto:
 **"API key errors"**
 - Solución: Verifica que tu archivo `.env` esté en la raíz del proyecto y contenga claves válidas
 - Prueba con: `python -c "from dotenv import load_dotenv; load_dotenv(); import os; print(bool(os.getenv('OPENWEATHER_API_KEY')))"`
+
+**"No se ha encontrado la orden sqlite3"**
+- Solución: `sqlite3` es un binario del sistema, no un paquete de Python. Instálalo con:
+  - Linux/WSL: `sudo apt install sqlite3`
+  - macOS: `brew install sqlite`
+  - O simplemente corre `./setup.sh` que lo instala automáticamente.
 
 **Errores "Database locked" con dbt**
 - Solución: Asegúrate de que ningún otro proceso esté usando la base de datos SQLite. Elimina `dbt/weather_air_quality.db` y vuelve a ejecutar `dbt run` si es necesario.
