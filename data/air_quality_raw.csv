@@ -1,0 +1,5 @@
+city,state,country,aqi,main_pollutant,temperature,humidity,pressure,wind_speed,wind_direction,weather_condition,timestamp
+London,England,GB,42,p2,11.8,80,1011,4.9,225,Clouds,2024-01-15 08:00:00
+New York,New York,US,85,p2,1.5,67,1017,9.1,268,Clear,2024-01-15 08:00:00
+Tokyo,Tokyo,JP,58,p2,7.9,57,1019,3.0,182,Rain,2024-01-15 08:00:00
+Sydney,New South Wales,AU,22,p1,24.2,64,1009,3.8,92,Clear,2024-01-15 08:00:00

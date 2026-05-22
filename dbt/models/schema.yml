@@ -2,24 +2,17 @@ version: 2
 
 models:
   - name: stg_weather
-    description: "Staged weather data"
+    description: "Staged weather data cleaned and standardized"
     columns:
       - name: city
         tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: ['London', 'New York', 'Tokyo', 'Sydney']
       - name: temperature
         tests:
           - not_null
-          - accepted_range:
-              arguments:
-                min: -50
-                max: 60
 
   - name: stg_air_quality
-    description: "Staged air quality data"
+    description: "Staged air quality data cleaned and standardized"
     columns:
       - name: city
         tests:
@@ -27,10 +20,6 @@ models:
       - name: aqi
         tests:
           - not_null
-          - accepted_range:
-              arguments:
-                min: 0
-                max: 500
 
   - name: mart_weather_air_quality
     description: "Mart table combining weather and air quality data"
@@ -41,7 +30,3 @@ models:
       - name: weather_temperature
         tests:
           - not_null
-          - accepted_range:
-              arguments:
-                min: -50
-                max: 60

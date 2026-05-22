@@ -1,0 +1,5 @@
+city,country,temperature,feels_like,humidity,pressure,wind_speed,wind_direction,weather_condition,weather_description,timestamp
+London,GB,12.5,10.2,78,1012,5.3,220,Clouds,overcast clouds,2024-01-15 08:00:00
+New York,US,2.1,-2.5,65,1018,8.7,270,Clear,clear sky,2024-01-15 08:00:00
+Tokyo,JP,8.3,6.1,55,1020,3.2,180,Rain,light rain,2024-01-15 08:00:00
+Sydney,AU,24.7,25.3,62,1008,4.1,90,Clear,clear sky,2024-01-15 08:00:00

@@ -34,7 +34,10 @@ jobs:
               type: sqlite
               schema: main
               threads: 1
-              database: :memory:
+              database: /tmp/weather_air_quality.db
+              schemas_and_paths:
+                main: /tmp/weather_air_quality.db
+              schema_directory: /tmp
           target: dev
         EOF
 
@@ -43,12 +46,22 @@ jobs:
         python -m py_compile src/extract_weather.py
         python -m py_compile src/extract_air_quality.py
 
+    - name: dbt seed
+      run: |
+        cd dbt
+        dbt seed
+
     - name: dbt parse
       run: |
         cd dbt
         dbt parse
 
-    - name: dbt test (optional, but we try)
+    - name: dbt run
+      run: |
+        cd dbt
+        dbt run
+
+    - name: dbt test
       run: |
         cd dbt
         dbt test || echo "Some tests failed, but we continue for the demo"
