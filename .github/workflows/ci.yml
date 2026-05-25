@@ -21,8 +21,23 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas requests python-dotenv
+        pip install pandas requests python-dotenv pytest
         pip install dbt-core dbt-sqlite
+
+    - name: Check Python syntax
+      run: |
+        python -m py_compile src/extract_weather.py
+        python -m py_compile src/extract_air_quality.py
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # DEMO V2: Este es el paso que detecta alucinaciones de la IA.
+    # Si el código tiene un parámetro inválido en requests.get()
+    # (ej: exponential_decay=True), este paso falla con X roja en GitHub Actions.
+    # Con la implementación correcta, pasa en verde.
+    # ─────────────────────────────────────────────────────────────────────────
+    - name: Run Python unit tests
+      run: |
+        pytest src/tests/ -v
 
     - name: Set up dbt profile
       run: |
@@ -40,11 +55,6 @@ jobs:
               schema_directory: /tmp
           target: dev
         EOF
-
-    - name: Check Python syntax
-      run: |
-        python -m py_compile src/extract_weather.py
-        python -m py_compile src/extract_air_quality.py
 
     - name: dbt seed
       run: |
@@ -64,4 +74,4 @@ jobs:
     - name: dbt test
       run: |
         cd dbt
-        dbt test || echo "Some tests failed, but we continue for the demo"
+        dbt test
