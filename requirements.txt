@@ -1,5 +1,6 @@
 pandas
 requests
 python-dotenv
+pytest>=7.0.0
 dbt-core
 dbt-sqlite

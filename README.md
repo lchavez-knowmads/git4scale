@@ -1,228 +1,237 @@
-# Pipeline ETL de Clima + Calidad del Aire
+# Pipeline ETL Clima + Calidad del Aire
+### Template de Gobernanza de IA con Trunk-Based Development
 
-Este es un pipeline ETL simple que:
-1. Extrae datos del clima de la API de OpenWeatherMap
-2. Extrae datos de calidad del aire de la API de AirVisual
-3. Transforma y combina los datos usando dbt
-4. Carga los resultados en una tabla analítica
+> **Git ya no es una herramienta de control de versiones — es la única línea de defensa
+> que tienes contra el código que genera la IA.**
 
-## Requisitos Previos
+[![CI](https://github.com/knowmads/git4scale/actions/workflows/ci.yml/badge.svg)](https://github.com/knowmads/git4scale/actions/workflows/ci.yml)
 
-Antes de comenzar, asegúrate de tener:
-- Python 3.8 o superior instalado
-- Git instalado
-- **sqlite3** (CLI del sistema) instalado — en Linux/WSL: `sudo apt install sqlite3`
-- Acceso a las claves API de OpenWeatherMap y AirVisual (puedes obtener niveles gratuitos para pruebas)
-
-## Setup Rápido (Recomendado)
-
-Puedes configurar todo el entorno automáticamente con el script de setup:
-
-```bash
-# Dar permisos de ejecución y correr el script
-chmod +x setup.sh
-./setup.sh
-```
-
-El script instala automáticamente:
-- `sqlite3` (si no está presente y tienes `apt` o `brew`)
-- El entorno virtual de Python
-- Todas las dependencias de Python (`requirements.txt`)
-- Las dependencias de dbt
-
-Si prefieres la configuración manual, sigue los pasos a continuación.
+Este repositorio es el template utilizado en el workshop **"TBD para Data Engineering"**.
+Demuestra cómo aplicar **Trunk-Based Development (TBD)** para gobernar la velocidad de
+los agentes de IA en un pipeline de datos real.
 
 ---
 
-## Instrucciones de Configuración Manual
+## ¿Por qué este repositorio?
 
-Sigue estos pasos para configurar el proyecto:
+En la era de los agentes de IA (Cursor, Copilot, Claude), el volumen de código generado
+se ha multiplicado por diez. El problema ya no es *escribir* código: es **auditarlo y
+controlarlo**.
 
-### 1. Clonar el Repositorio
-```bash
-git clone <repository-url>
-cd <repository-name>
-```
+Sin una disciplina de integración continua y ramas cortas, cada línea que genera la IA
+acumula lo que llamamos **Verification Debt** (deuda de verificación): código no validado,
+posibles alucinaciones ocultas en ramas de larga duración, y conflictos masivos al momento
+del merge.
 
-### 2. Crear y Activar un Entorno Virtual (Recomendado)
-```bash
-# Crear entorno virtual
-python -m venv venv
+Este pipeline demuestra el antídoto: **TBD + CI/CD automático**.
 
-# Activar entorno virtual
-# En Windows:
-venv\Scripts\activate
-# En macOS/Linux:
-source venv/bin/activate
-```
+---
 
-### 3. Instalar Dependencias
-```bash
-# Asegurarse de que pip esté actualizado
-pip install --upgrade pip
+## El Pipeline
 
-# Instalar dependencias del proyecto
-pip install -r requirements.txt
-```
+Un ETL modular, agnóstico de proveedores (lock-in free) que:
 
-### 4. Configurar Variables de Entorno
-Acceda a las direcciones para crear su API key
- - https://openweathermap.org/api
- - https://dashboard.iqair.com/personal/api-keys
+1. **Extrae** datos de clima desde la API de OpenWeatherMap (`src/extract_weather.py`)
+2. **Extrae** datos de calidad del aire desde la API de AirVisual (`src/extract_air_quality.py`)
+3. **Transforma** y combina los datos con dbt (`dbt/models/`)
+4. **Carga** los resultados en una base de datos SQLite para analítica
 
-Crea un archivo `.env` en la raíz del proyecto con tus claves API:
-```
-OPENWEATHER_API_KEY=tu_clave_api_de_openweathermap_aqui
-AIRVISUAL_API_KEY=tu_clave_api_de_airvisual_aqui
-```
-
-> **Nota:** Nunca hagas commit de tu archivo `.env` al control de versiones. Ya está incluido en `.gitignore`.
-
-### 5. Configurar dbt
-```bash
-# Navegar al directorio de dbt
-cd dbt
-
-# Instalar dependencias de dbt (si las hay)
-dbt deps
-```
-puede aparecer el mensaje
-```bash
-Warning: No packages were found in packages.yml
-```
-y no hay problemas
-
-### 6. Verificar la Configuración
-Puedes comprobar que todo funciona correctamente ejecutando:
-```bash
-# Desde la raíz del proyecto
-python -c "import pandas, requests, dotenv; print('Dependencias de Python OK')"
-
-# Desde el directorio de dbt
-cd dbt
-dbt debug
-# Debería mostrar: "Connection OK" y "All tests passed!"
-```
+---
 
 ## Estructura del Proyecto
 
 ```
-weather-air-quality-pipeline/
+git4scale/
 ├── src/
-│   ├── extract_weather.py          # Extracción de datos del clima
-│   └── extract_air_quality.py      # Extracción de datos de calidad del aire
+│   ├── extract_weather.py       # Script de extracción del clima (protagonista del workshop)
+│   ├── extract_air_quality.py   # Script de extracción de calidad del aire
+│   └── tests/
+│       └── test_extract_weather.py  # Tests unitarios — el "freno de mano" del CI
 ├── dbt/
 │   ├── models/
 │   │   ├── stg_weather.sql
 │   │   ├── stg_air_quality.sql
 │   │   └── mart_weather_air_quality.sql
 │   ├── tests/
-│   │   └── schema_tests.yml
-│   ├── dbt_project.yml
-│   └── profiles.yml                # Configuración del perfil de dbt
+│   └── dbt_project.yml
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                  # CI/CD con GitHub Actions
-├── requirements.txt                # Dependencias de Python
-├── setup.sh                        # Script de setup automático del entorno
-├── .env                            # Variables de entorno (NO en el repo)
-└── README.md
+│       └── ci.yml               # CI: pytest + dbt test (falla si hay alucinación)
+├── preparacion/
+│   ├── facilitator_guide_v2.md  # Guía completa para el video de 30 min
+│   ├── facilitator_guide.md     # Guía del taller presencial de 90 min (V1)
+│   ├── demo_alucinacion.py      # Código de referencia para la demo del error de IA
+│   └── paso1_ana_weather_timeout.md  # Flujo paso a paso del caso Ana
+├── requirements.txt
+└── setup.sh
 ```
 
-## Ejecutando el Pipeline
+---
 
-### 1. Extraer Datos
+## Setup Rápido
+
 ```bash
-# Desde la raíz del proyecto
+# 1. Clonar el repositorio
+git clone <repository-url>
+cd git4scale
+
+# 2. Setup automático (recomendado)
+chmod +x setup.sh
+./setup.sh
+```
+
+O manualmente:
+
+```bash
+# Crear y activar entorno virtual
+python -m venv venv
+venv\Scripts\activate       # Windows
+# source venv/bin/activate  # macOS/Linux
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Configurar variables de entorno
+cp .env.example .env        # Edita con tus claves de API
+```
+
+### Variables de Entorno
+
+Crea un archivo `.env` en la raíz del proyecto:
+
+```env
+OPENWEATHER_API_KEY=tu_clave_aqui   # https://openweathermap.org/api
+AIRVISUAL_API_KEY=tu_clave_aqui     # https://dashboard.iqair.com/personal/api-keys
+```
+
+> **Nota:** El archivo `.env` está en `.gitignore`. Nunca lo hagas commit.
+
+---
+
+## Reproducir la Demo del Workshop
+
+### Paso 1 — Verificar que `main` está en verde
+
+```bash
+pytest src/tests/ -v   # Todos los tests deben pasar
+```
+
+### Paso 2 — Simular el flujo de Ana (la alucinación de la IA)
+
+```bash
+# Ana crea su rama corta
+git checkout -b feature/weather-api-timeout
+
+# Ana copia el código generado por la IA (con el parámetro alucinado)
+# Ver: preparacion/demo_alucinacion.py
+
+# Ana hace commit y push
+git add src/extract_weather.py
+git commit -m "feat: add exponential backoff to weather API calls"
+git push origin feature/weather-api-timeout
+```
+
+El CI en GitHub Actions fallará en el paso **Run Python unit tests** con:
+```
+TypeError: requests.get() got an unexpected keyword argument 'exponential_decay'
+```
+
+### Paso 3 — Recuperación inmediata (el poder de TBD)
+
+```bash
+git revert HEAD --no-edit
+git push origin feature/weather-api-timeout
+```
+
+El CI vuelve a verde ✅. El bug de la IA fue detectado en < 3 minutos, no en 2 semanas.
+
+---
+
+## CI/CD Pipeline
+
+El workflow de GitHub Actions (`.github/workflows/ci.yml`) ejecuta en cada PR:
+
+| Paso | Qué valida |
+|------|-----------|
+| `Check Python syntax` | Sintaxis básica (`py_compile`) |
+| `Run Python unit tests` | **Tests unitarios con pytest** — detecta alucinaciones de parámetros |
+| `dbt seed` | Carga datos de prueba |
+| `dbt run` | Ejecuta los modelos de transformación |
+| `dbt test` | Valida esquemas y datos |
+
+> El paso `Run Python unit tests` es la clave de la demo: **falla** con el código
+> alucinado por la IA y **pasa** con la implementación correcta.
+
+---
+
+## Flujo de Desarrollo (Trunk-Based Development)
+
+```bash
+# Siempre desde main actualizado
+git checkout main
+git pull origin main
+
+# Rama corta (≤ 48 horas)
+git checkout -b feature/tu-cambio
+
+# Cambios pequeños, un solo enfoque
+git add <archivos>
+git commit -m "tipo: descripción concisa"
+
+# Push + PR + esperar CI verde
+git push origin feature/tu-cambio
+
+# Merge a main y borrar rama
+git checkout main
+git merge feature/tu-cambio
+git branch -d feature/tu-cambio
+```
+
+**Las 3 Reglas de Oro:**
+1. 🕐 **Ramas ≤ 48 horas** — No acumules código sin integrar
+2. 📏 **PRs ≤ 200 líneas** — Los humanos solo pueden auditar cambios pequeños
+3. 🛡️ **CI obligatorio** — Ningún código llega a `main` sin pasar las pruebas
+
+---
+
+## Ejecutar el Pipeline Completo
+
+```bash
+# Extracción (requiere claves de API)
 python src/extract_weather.py
 python src/extract_air_quality.py
-```
-Esto creará archivos CSV en el directorio `data/`:
-- `data/weather_raw.csv`
-- `data/air_quality_raw.csv`
 
-### 2. Transformar con dbt
-```bash
-# Desde el directorio de dbt
+# Transformación con dbt
 cd dbt
 dbt seed
 dbt run
-```
-Esto hará lo siguiente:
-- Crear modelos de staging (`stg_weather`, `stg_air_quality`)
-- Crear el modelo mart (`mart_weather_air_quality`)
-- Guardar los resultados en una base de datos SQLite (`weather_air_quality.db`)
-
-### 3. Ejecutar Pruebas
-```bash
-# Desde el directorio de dbt
 dbt test
-```
-Esto ejecuta pruebas de datos y esquemas definidas en `dbt/tests/`
 
-### 4. Ver Resultados (Opcional)
-Puedes consultar los resultados usando SQLite:
-```bash
+# Ver resultados
 sqlite3 dbt/weather_air_quality.db
-```
-Luego dentro de SQLite:
-```sql
-.headers on
-.mode column
 SELECT * FROM mart_weather_air_quality LIMIT 5;
 ```
 
-## Flujo de Trabajo de Desarrollo
-
-Para hacer cambios en este proyecto:
-
-1. Crea una nueva rama: `git checkout -b feature/nombre-de-tu-funcionalidad`
-2. Realiza tus cambios
-3. Prueba localmente: Ejecuta la extracción, dbt run y dbt test
-4. Haz un commit: `git add . && git commit -m "Tu mensaje descriptivo"`
-5. Empuja los cambios: `git push origin feature/nombre-de-tu-funcionalidad`
-6. Abre un Pull Request para revisión
+---
 
 ## Solución de Problemas
 
-### Problemas Comunes
+| Error | Solución |
+|-------|----------|
+| `ModuleNotFoundError: No module named 'pandas'` | Activa el entorno virtual y corre `pip install -r requirements.txt` |
+| `dbt command not found` | `pip install dbt-core dbt-sqlite` con el entorno virtual activo |
+| `API key errors` | Verifica que `.env` existe en la raíz con claves válidas |
+| `sqlite3: command not found` | `sudo apt install sqlite3` (Linux) o `brew install sqlite` (macOS) |
+| `Database locked` | Borra `dbt/weather_air_quality.db` y vuelve a ejecutar `dbt run` |
 
-**"ModuleNotFoundError: No module named 'pandas'"**
-- Solución: Asegúrate de estar en el entorno virtual activado y de haber ejecutado `pip install -r requirements.txt`
+---
 
-**"dbt command not found"**
-- Solución: Asegúrate de que dbt esté instalado (`pip install dbt-core dbt-sqlite`) y que tu entorno virtual esté activado
+## Recursos del Workshop
 
-**"API key errors"**
-- Solución: Verifica que tu archivo `.env` esté en la raíz del proyecto y contenga claves válidas
-- Prueba con: `python -c "from dotenv import load_dotenv; load_dotenv(); import os; print(bool(os.getenv('OPENWEATHER_API_KEY')))"`
-
-**"No se ha encontrado la orden sqlite3"**
-- Solución: `sqlite3` es un binario del sistema, no un paquete de Python. Instálalo con:
-  - Linux/WSL: `sudo apt install sqlite3`
-  - macOS: `brew install sqlite`
-  - O simplemente corre `./setup.sh` que lo instala automáticamente.
-
-**Errores "Database locked" con dbt**
-- Solución: Asegúrate de que ningún otro proceso esté usando la base de datos SQLite. Elimina `dbt/weather_air_quality.db` y vuelve a ejecutar `dbt run` si es necesario.
-
-## Pipeline de CI/CD
-
-Este proyecto incluye un flujo de trabajo de GitHub Actions (`.github/workflows/ci.yml`) que automáticamente:
-- Clona el código
-- Configura Python
-- Instala las dependencias
-- Valida la sintaxis de Python
-- Analiza el proyecto dbt
-- Ejecuta las pruebas de dbt
-
-El flujo de trabajo se ejecuta en cada push y pull request a la rama `main`.
-
-## ¿Necesitas Ayuda?
-
-Si encuentras problemas:
-1. Revisa cada paso de la configuración
-2. Asegúrate de que tu entorno virtual esté activado
-3. Verifica que tus claves API sean válidas y no hayan expirado
-4. Comprueba que estás ejecutando los comandos desde el directorio correcto
-5. Busca el mensaje de error en internet - muchos problemas comunes tienen soluciones documentadas
+| Recurso | Descripción |
+|---------|-------------|
+| [`preparacion/facilitator_guide_v2.md`](preparacion/facilitator_guide_v2.md) | Guía y guion completo del video de 30 min |
+| [`preparacion/facilitator_guide.md`](preparacion/facilitator_guide.md) | Guía del taller presencial de 90 min (V1) |
+| [`preparacion/demo_alucinacion.py`](preparacion/demo_alucinacion.py) | Código de referencia para la demo |
+| [`preparacion/paso1_ana_weather_timeout.md`](preparacion/paso1_ana_weather_timeout.md) | Flujo detallado del caso Ana |
+| [trunkbaseddevelopment.com](https://trunkbaseddevelopment.com) | Guía definitiva de TBD |
